@@ -5,7 +5,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     // MARK: - Private Properties
     
     private var questionFactory: QuestionFactory?
-    private weak var viewController: MovieQuizViewController?
+    private weak var viewController: MovieQuizViewControllerProtocol?
     private var statisticService: StatisticService?  // Сервис для сохранения статистики
     private var currentQuestion: QuizQuestion?  // Текущий вопрос
     
@@ -15,7 +15,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
 
     // MARK: - Initialization
     
-    init(viewController: MovieQuizViewController) {
+    init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
         
         // Инициализация сервиса статистики

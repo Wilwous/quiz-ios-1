@@ -2,7 +2,7 @@ import UIKit
 
 // MARK: - MovieQuizViewController
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
 
     // MARK: - IBOutlet
 
