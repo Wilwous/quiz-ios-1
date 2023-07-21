@@ -22,7 +22,7 @@ final class StatisticServiceImpl {
     private let dateProvider: () -> Date  // Функция для предоставления текущей даты
 
     // Инициализатор сервиса статистики
-    init(userDefaults: UserDefaults,
+    init(userDefaults: UserDefaults = .standard,
          decoder: JSONDecoder = JSONDecoder(),
          encoder: JSONEncoder = JSONEncoder(),
          dateProvider: @escaping () -> Date = { Date() }
@@ -102,4 +102,5 @@ extension StatisticServiceImpl: StatisticService {
         }
     }
 }
+
 
