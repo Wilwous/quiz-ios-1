@@ -6,38 +6,31 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     private var questionFactory: QuestionFactory?
     private weak var viewController: MovieQuizViewControllerProtocol?
-    private var statisticService: StatisticService?  // Сервис для сохранения статистики
-    private var currentQuestion: QuizQuestion?  // Текущий вопрос
+    private var statisticService: StatisticService?
+    private var currentQuestion: QuizQuestion?
     
-    private var currentQuestionIndex = 0  // Индекс текущего вопроса
-    private var correctAnswers = 0  // Количество правильных ответов
-    private let questionsAmount: Int = 10  // Общее количество вопросов
+    private var currentQuestionIndex = 0
+    private var correctAnswers = 0
+    private let questionsAmount: Int = 10
 
     // MARK: - Initialization
     
     init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
-        
-        // Инициализация сервиса статистики
         statisticService = StatisticServiceImpl()
-        
-        // Инициализация QuestionFactory и загрузка данных
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
-
-        // Показ индикатора загрузки
         viewController.showLoadingIndicator()
     }
     
     // MARK: - QuestionFactoryDelegate
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        // Весь код для обработки получения нового вопроса остается здесь, т.к. теперь MovieQuizPresenter является QuestionFactoryDelegate
+
         guard let question = question else {
             return
         }
 
-        // Сохраняем текущий вопрос и обновляем UI
         currentQuestion = question
         let viewModel = convert(model: question)
         DispatchQueue.main.async { [weak self] in
@@ -77,8 +70,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     func switchToNextQuestion() {
         currentQuestionIndex += 1
     }
-    
-    // Конвертирование модели вопроса в модель представления
+
     func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
             image: UIImage(data: model.image) ?? UIImage(),
@@ -119,8 +111,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                 text: text,
                 buttonText: "Сыграть ещё раз")
             viewController?.showQuizResults(result: viewModel)
-
-            // Сбрасываем значения для нового раунда
             correctAnswers = 0
             currentQuestionIndex = 0
         } else {
@@ -131,7 +121,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     func makeResultMessage() -> String {
-        // Проверяем, что есть доступ к статистике и лучшая игра
         guard let statisticService = statisticService else {
             return "Ошибка: статистика недоступна"
         }
@@ -141,13 +130,11 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             return "Ошибка: лучшая игра недоступна"
         }
 
-        // Формируем строки для сообщения с результатами
         let totalPlaysCountLine = "Количество сыгранных квизов: \(statisticService.gamesCount)"
         let currentGameResultLine = "Ваш результат: \(correctAnswers)/\(questionsAmount)"
         let bestGameInfoLine = "Рекорд: \(bestGame.correct)/\(bestGame.total) (\(bestGame.date.dateTimeString))"
         let averageAccuracyLine = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
 
-        // Объединяем все строки в одну с переносами строк
         let resultMessage = [
             currentGameResultLine,
             totalPlaysCountLine,
@@ -157,8 +144,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
 
         return resultMessage
     }
-    
-    // Отображение результата ответа на вопрос
+
     func proceedWithAnswer(isCorrect: Bool) {
 
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)

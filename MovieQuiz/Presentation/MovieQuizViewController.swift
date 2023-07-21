@@ -6,17 +6,17 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
 
     // MARK: - IBOutlet
 
-    @IBOutlet private weak var noButton: UIButton!  // Кнопка "Нет"
-    @IBOutlet private weak var yesButton: UIButton!  // Кнопка "Да"
-    @IBOutlet private weak var imageView: UIImageView!  // Изображение вопроса
-    @IBOutlet private weak var textLabel: UILabel!  // Текст вопроса
-    @IBOutlet private weak var counterLabel: UILabel!  // Счетчик текущего вопроса
-    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!  // Индикатор загрузки
+    @IBOutlet private weak var noButton: UIButton!
+    @IBOutlet private weak var yesButton: UIButton!
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var textLabel: UILabel!
+    @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
 
     // MARK: - Private variables
     
     private var presenter: MovieQuizPresenter!
-    private var alertPresenter: AlertPresenter?  // Презентер для отображения алертов
+    private var alertPresenter: AlertPresenter?
     private var isButtonsEnabled = true
 
     // MARK: - Lifecycle
@@ -24,23 +24,18 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter = MovieQuizPresenter(viewController: self)
-        
-        // Инициализация презентера алертов
         alertPresenter = AlertPresenterImpl(viewController: self)
-        
-        // Показ индикатора загрузки
         showLoadingIndicator()
-        activityIndicator.hidesWhenStopped = true  // Скрытие индикатора загрузки при остановке
-        activityIndicator.startAnimating()  // Запуск анимации индикатора загрузки
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.startAnimating()
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent  // Установка стиля статус-бара
+        return .lightContent
     }
     
     // MARK: - Public Methods
-    
-    // Отображение текущего вопроса
+
     func showCurrentQuestion(step: QuizStepViewModel) {
         imageView.image = step.image
         textLabel.text = step.question
@@ -50,7 +45,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         imageView.layer.borderColor = UIColor.clear.cgColor
     }
 
-    // Отображение результатов квиза
     func showQuizResults(result: QuizResultsViewModel) {
         let message = presenter.makeResultMessage()
 
@@ -60,28 +54,24 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
             buttonText: result.buttonText) { [weak self] in
                self?.presenter.restartGame()
            }
-       alertPresenter?.show(alertModel: alertModel)  // Отображение алерта с результатами
+       alertPresenter?.show(alertModel: alertModel)
    }
 
-    // Подсветка рамки изображения вопроса в зависимости от правильности ответа
     func highlightImageBorder(isCorrectAnswer: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
     }
 
-    // Показ индикатора загрузки
     func showLoadingIndicator() {
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
 
-    // Скрытие индикатора загрузки
     func hideLoadingIndicator() {
         activityIndicator.isHidden = true
     }
     
-    // Обработчик нажатия кнопки "Да"
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         if isButtonsEnabled {
             presenter.yesButtonClicked()
@@ -89,7 +79,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         }
     }
     
-    // Обработчик нажатия кнопки "Нет"
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         if isButtonsEnabled {
             presenter.noButtonClicked()
@@ -97,21 +86,18 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         }
     }
     
-    // Отключение кнопок для предотвращения повторного нажатия до завершения вопроса
     private func disableButtons() {
         isButtonsEnabled = false
         yesButton.isEnabled = false
         noButton.isEnabled = false
     }
     
-    // Включение кнопок после завершения текущего вопроса
     func enableButtons() {
         isButtonsEnabled = true
         yesButton.isEnabled = true
         noButton.isEnabled = true
     }
     
-    // Отображение ошибки сети
     func showNetworkError(message: String) {
         hideLoadingIndicator()
         let alertModel = AlertModel(title: "Ошибка",
