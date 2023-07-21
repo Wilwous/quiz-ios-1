@@ -24,12 +24,12 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         // Инициализация QuestionFactory и загрузка данных
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
-        
+
         // Показ индикатора загрузки
         viewController.showLoadingIndicator()
     }
-
-    // MARK: - Public Methods
+    
+    // MARK: - QuestionFactoryDelegate
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
         // Весь код для обработки получения нового вопроса остается здесь, т.к. теперь MovieQuizPresenter является QuestionFactoryDelegate
@@ -44,17 +44,34 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             self?.viewController?.showCurrentQuestion(step: viewModel)
         }
     }
+
+    func didLoadDataFromServer() {
+        viewController?.hideLoadingIndicator()
+        questionFactory?.requestNextQuestion()
+    }
+    
+    func didFailToLoadData(with error: Error) {
+        let message = error.localizedDescription
+        viewController?.showNetworkError(message: message)
+    }
+    
+    func didFailToLoadImage(with error: Error) {
+         DispatchQueue.main.async { [weak self] in
+             guard let self = self else { return }
+             let message = error.localizedDescription
+             self.viewController?.showNetworkError(message: message)
+         }
+     }
+    
+    // MARK: - Public Methods
     
     func isLastQuestion() -> Bool {
         currentQuestionIndex == questionsAmount - 1
     }
     
     func restartGame() {
-        currentQuestionIndex = 0
-        correctAnswers = 0
         questionFactory?.requestNextQuestion()
         viewController?.enableButtons()
-        statisticService?.store(correct: correctAnswers, total: questionsAmount)
     }
     
     func switchToNextQuestion() {
@@ -85,20 +102,14 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         
         self.proceedWithAnswer(isCorrect: isYes == currentQuestion.correctAnswer)
     }
-    // MARK: - QuestionFactoryDelegate
-    
-    func didLoadDataFromServer() {
-        viewController?.hideLoadingIndicator()
-        questionFactory?.requestNextQuestion()
-    }
-    
-    func didFailToLoadData(with error: Error) {
-        let message = error.localizedDescription
-        viewController?.showNetworkError(message: message)
-    }
-    
+
     private func proceedToNextQuestionOrResults() {
         if self.isLastQuestion() {
+            if correctAnswers > statisticService?.bestGame?.correct ?? 0 {
+                // Обновляем рекорд, если текущий результат лучше
+                statisticService?.store(correct: correctAnswers, total: questionsAmount)
+            }
+            // Показываем результаты игры
             let text = correctAnswers == self.questionsAmount ?
             "Поздравляем, вы ответили на 10 из 10!" :
             "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
@@ -107,7 +118,11 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                 title: "Этот раунд окончен!",
                 text: text,
                 buttonText: "Сыграть ещё раз")
-                viewController?.showQuizResults(result: viewModel)
+            viewController?.showQuizResults(result: viewModel)
+
+            // Сбрасываем значения для нового раунда
+            correctAnswers = 0
+            currentQuestionIndex = 0
         } else {
             self.switchToNextQuestion()
             questionFactory?.requestNextQuestion()

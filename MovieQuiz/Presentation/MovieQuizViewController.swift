@@ -126,4 +126,8 @@ final class MovieQuizViewController: UIViewController {
 
         alertPresenter?.show(alertModel: alertModel)
     }
+    
+    func didFailToLoadImage(with error: Error) {
+        presenter.didFailToLoadImage(with: error)
+    }
 }

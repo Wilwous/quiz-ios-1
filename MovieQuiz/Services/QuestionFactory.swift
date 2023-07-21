@@ -65,12 +65,19 @@ class QuestionFactory: QuestionFactoryProtocol {
                     self.delegate?.didReceiveNextQuestion(question: question)
                 }
             } catch {
-                print("Failed to load image")
+                //                print("Failed to load image")
+                // Обработка ошибки загрузки изображения
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    // Создание объекта NSError для передачи в метод didFailToLoadImage(with error: Error)
+                    let error = NSError(domain: "com.yourdomain.MovieQuiz", code: 100, userInfo: [NSLocalizedDescriptionKey: "Ошибка загрузки изображения фильма"])
+                    // Вызов метода didFailToLoadImage(with error: Error)
+                    self.delegate?.didFailToLoadImage(with: error)
+                }
             }
         }
     }
 }
-
 //    private let questions: [QuizQuestion] = [
 //        QuizQuestion(
 //            image: "The Godfather",
