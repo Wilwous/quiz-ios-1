@@ -115,17 +115,20 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     func makeResultMessage() -> String {
-//         Проверяем, что есть доступ к статистике и лучшая игра
-        guard let statisticService = statisticService, let BestGame = statisticService.bestGame else {
-            assertionFailure("error message")
-            return ""
+        // Проверяем, что есть доступ к статистике и лучшая игра
+        guard let statisticService = statisticService else {
+            return "Ошибка: статистика недоступна"
         }
-        
+
+        statisticService.store(correct: correctAnswers, total: questionsAmount)
+        guard let bestGame = statisticService.bestGame else {
+            return "Ошибка: лучшая игра недоступна"
+        }
+
         // Формируем строки для сообщения с результатами
         let totalPlaysCountLine = "Количество сыгранных квизов: \(statisticService.gamesCount)"
-        let currentGameResultLine = "Ваш результат: \(correctAnswers)\\\(questionsAmount)"
-        let bestGameInfoLine = "Рекорд: \(BestGame.correct)/\(BestGame.total)"
-        + " (\(BestGame.date.dateTimeString))"
+        let currentGameResultLine = "Ваш результат: \(correctAnswers)/\(questionsAmount)"
+        let bestGameInfoLine = "Рекорд: \(bestGame.correct)/\(bestGame.total) (\(bestGame.date.dateTimeString))"
         let averageAccuracyLine = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
 
         // Объединяем все строки в одну с переносами строк
