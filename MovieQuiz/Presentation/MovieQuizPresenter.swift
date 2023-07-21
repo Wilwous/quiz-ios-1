@@ -54,6 +54,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         correctAnswers = 0
         questionFactory?.requestNextQuestion()
         viewController?.enableButtons()
+        statisticService?.store(correct: correctAnswers, total: questionsAmount)
     }
     
     func switchToNextQuestion() {
