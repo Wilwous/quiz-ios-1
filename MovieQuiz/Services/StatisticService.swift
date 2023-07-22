@@ -1,6 +1,5 @@
 import Foundation
 
-// Протокол для сервиса статистики
 protocol StatisticService {
     func store(correct: Int, total: Int)
     var totalAccuracy: Double { get }
@@ -8,20 +7,17 @@ protocol StatisticService {
     var bestGame: BestGame? { get }
 }
 
-// Реализация сервиса статистики
 final class StatisticServiceImpl {
 
-    // Перечисление для ключей UserDefaults
     private enum Keys: String {
         case correct, total, bestGame, gamesCount
     }
 
-    private let decoder: JSONDecoder  // Декодер JSON
-    private let encoder: JSONEncoder  // Кодер JSON
-    private var userDefaults = UserDefaults.standard  // UserDefaults
-    private let dateProvider: () -> Date  // Функция для предоставления текущей даты
+    private let decoder: JSONDecoder
+    private let encoder: JSONEncoder
+    private var userDefaults = UserDefaults.standard
+    private let dateProvider: () -> Date
 
-    // Инициализатор сервиса статистики
     init(userDefaults: UserDefaults = .standard,
          decoder: JSONDecoder = JSONDecoder(),
          encoder: JSONEncoder = JSONEncoder(),
@@ -34,7 +30,6 @@ final class StatisticServiceImpl {
     }
 }
 
-// Расширение класса StatisticServiceImpl, реализующее протокол StatisticService
 extension StatisticServiceImpl: StatisticService {
 
     var gamesCount: Int {
@@ -84,7 +79,6 @@ extension StatisticServiceImpl: StatisticService {
         }
     }
 
-    // Метод для сохранения результатов игры
     func store(correct: Int, total: Int) {
         self.correct += correct
         self.total += total

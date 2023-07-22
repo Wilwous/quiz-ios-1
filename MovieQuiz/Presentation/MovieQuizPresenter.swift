@@ -99,9 +99,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
 
     private func proceedToNextQuestionOrResults() {
         if self.isLastQuestion() {
-            if correctAnswers > statisticService?.bestGame?.correct ?? 0 {
-            }
-            
             let text = correctAnswers == self.questionsAmount ?
             "Поздравляем, вы ответили на 10 из 10!" :
             "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
