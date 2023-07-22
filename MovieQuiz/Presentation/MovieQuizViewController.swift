@@ -49,7 +49,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         let message = presenter.makeResultMessage()
 
         let alertModel = AlertModel(
-            title: "Этот раунд окончен!",
+            title: result.title,
             message: message,
             buttonText: result.buttonText) { [weak self] in
                self?.presenter.restartGame()
