@@ -4,9 +4,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
    
     // MARK: - Private Properties
     
-    private var questionFactory: QuestionFactory?
+    private var questionFactory: QuestionFactory!
     private weak var viewController: MovieQuizViewControllerProtocol?
-    private var statisticService: StatisticService?
+    private let statisticService: StatisticService!
     private var currentQuestion: QuizQuestion?
     
     private var currentQuestionIndex = 0
@@ -87,12 +87,14 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
 
     func didAnswer(isYes: Bool) {
-        guard let currentQuestion = currentQuestion else {return}
-        if isYes{
+        guard let currentQuestion = currentQuestion else { return }
+        let isCorrectAnswer = isYes == currentQuestion.correctAnswer
+        
+        if isCorrectAnswer {
             correctAnswers += 1
         }
         
-        self.proceedWithAnswer(isCorrect: isYes == currentQuestion.correctAnswer)
+        proceedWithAnswer(isCorrect: isCorrectAnswer)
     }
 
     private func proceedToNextQuestionOrResults() {

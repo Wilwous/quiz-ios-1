@@ -7,7 +7,7 @@ class QuestionFactory: QuestionFactoryProtocol {
     // Ссылка на делегата, который будет получать уведомления о событиях от QuestionFactory
     private var delegate: QuestionFactoryDelegate?
     // Инициализация QuestionFactory с внедрением зависимостей
-    init(moviesLoader: MoviesLoading, delegate: QuestionFactoryDelegate?) {
+    init(moviesLoader: MoviesLoading, delegate: QuestionFactoryDelegate) {
         self.moviesLoader = moviesLoader
         self.delegate = delegate
     }

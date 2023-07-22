@@ -16,7 +16,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     // MARK: - Private variables
     
     private var presenter: MovieQuizPresenter!
-    private var alertPresenter: AlertPresenter?
+    private var alertPresenter: AlertPresenter!
     private var isButtonsEnabled = true
 
     // MARK: - Lifecycle
