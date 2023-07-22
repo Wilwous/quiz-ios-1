@@ -72,30 +72,24 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         activityIndicator.isHidden = true
     }
     
+    func setButtonsEnabled(_ isEnabled: Bool) {
+        isButtonsEnabled = isEnabled
+        yesButton.isEnabled = isEnabled
+        noButton.isEnabled = isEnabled
+    }
+    
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         if isButtonsEnabled {
             presenter.yesButtonClicked()
-            disableButtons()
+            setButtonsEnabled(false)
         }
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         if isButtonsEnabled {
             presenter.noButtonClicked()
-            disableButtons()
+            setButtonsEnabled(false)
         }
-    }
-    
-    private func disableButtons() {
-        isButtonsEnabled = false
-        yesButton.isEnabled = false
-        noButton.isEnabled = false
-    }
-    
-    func enableButtons() {
-        isButtonsEnabled = true
-        yesButton.isEnabled = true
-        noButton.isEnabled = true
     }
     
     func showNetworkError(message: String) {
