@@ -30,7 +30,7 @@ class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     
     }
     
-    func enableButtons() {
+    func setButtonsEnabled(_ isEnabled: Bool) {
 
     }
     
