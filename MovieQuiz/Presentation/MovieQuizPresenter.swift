@@ -64,7 +64,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     func restartGame() {
         questionFactory?.requestNextQuestion()
-        viewController?.enableButtons()
+        viewController?.setButtonsEnabled(true)
     }
     
     func switchToNextQuestion() {
@@ -76,6 +76,10 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
+    }
+    
+    private func setButtonsEnabled(_ isEnabled: Bool) {
+        viewController?.setButtonsEnabled(isEnabled)
     }
     
     func yesButtonClicked() {
@@ -113,7 +117,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         } else {
             self.switchToNextQuestion()
             questionFactory?.requestNextQuestion()
-            viewController?.enableButtons()
+            setButtonsEnabled(true)
         }
     }
     
