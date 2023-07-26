@@ -23,8 +23,8 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter = MovieQuizPresenter(viewController: self)
         alertPresenter = AlertPresenterImpl(viewController: self)
+        presenter = MovieQuizPresenter(viewController: self, alertPresenter: alertPresenter)
         showLoadingIndicator()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.startAnimating()
@@ -46,15 +46,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     }
     
     func showQuizResults(result: QuizResultsViewModel) {
-        let message = presenter.makeResultMessage()
-        
-        let alertModel = AlertModel(
-            title: result.title,
-            message: message,
-            buttonText: result.buttonText) { [weak self] in
-                self?.presenter.restartGame()
-            }
-        alertPresenter?.show(alertModel: alertModel)
+        presenter.showQuizResultsAlert()
     }
     
     func highlightImageBorder(isCorrectAnswer: Bool) {

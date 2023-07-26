@@ -6,6 +6,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     private var questionFactory: QuestionFactory!
     private weak var viewController: MovieQuizViewControllerProtocol?
+    private var alertPresenter: AlertPresenter
     private let statisticService: StatisticService!
     private var currentQuestion: QuizQuestion?
     
@@ -15,8 +16,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     // MARK: - Initialization
     
-    init(viewController: MovieQuizViewControllerProtocol) {
+    init(viewController: MovieQuizViewControllerProtocol, alertPresenter: AlertPresenter) {
         self.viewController = viewController
+        self.alertPresenter = alertPresenter
         statisticService = StatisticServiceImpl()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
@@ -102,6 +104,20 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         proceedWithAnswer(isCorrect: isCorrectAnswer)
     }
     
+    func showQuizResultsAlert() {
+        let text = makeResultMessage()
+        
+        alertPresenter.show(alertModel: AlertModel(
+            title: "Этот раунд окончен!",
+            message: text,
+            buttonText: "Сыграть ещё раз"
+        ) {
+            self.correctAnswers = 0
+            self.currentQuestionIndex = 0
+            self.restartGame()
+        })
+    }
+    
     private func proceedToNextQuestionOrResults() {
         if isLastQuestion() {
             let text = correctAnswers == questionsAmount ?
@@ -115,6 +131,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             viewController?.showQuizResults(result: viewModel)
             correctAnswers = 0
             currentQuestionIndex = 0
+            showQuizResultsAlert()
         } else {
             switchToNextQuestion()
             questionFactory?.requestNextQuestion()
@@ -122,7 +139,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
     }
     
-    func makeResultMessage() -> String {
+    private func makeResultMessage() -> String {
         guard let statisticService = statisticService else {
             return "Ошибка: статистика недоступна"
         }
