@@ -7,14 +7,12 @@ struct BestGame: Codable {
 }
 
 extension BestGame: Comparable {
-
+    
     private var accuracy: Double {
-        guard total != 0 else {
-            return 0
-        }
-        return Double(correct) / Double(total)
+        
+        total != .zero ? Double(correct) / Double(total) : .zero
     }
-
+    
     static func < (lhs: BestGame, rhs: BestGame) -> Bool {
         return lhs.accuracy < rhs.accuracy
     }
